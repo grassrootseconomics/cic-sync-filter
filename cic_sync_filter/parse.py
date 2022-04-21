@@ -1,4 +1,12 @@
+# external imports
+from eth_erc20 import ERC20
+from erc20_faucet import Faucet
 from chainlib.eth.constant import ZERO_ADDRESS
+from chainlib.encode import TxHexNormalizer
+from hexathon import add_0x
+
+tx_normalize = TxHexNormalizer()
+
 
 def parse_transfer(tx, conn, chain_spec, caller_address=ZERO_ADDRESS):
     if not tx.payload:

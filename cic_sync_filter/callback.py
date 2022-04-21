@@ -17,16 +17,15 @@ from hexathon import (
         )
 from eth_erc20 import ERC20
 from erc20_faucet import Faucet
-from chainsyncer.filter import SyncFilter
+from cic_eth.eth.meta import ExtendedTx
 
 # local imports
-#from cic_eth.eth.meta import ExtendedTx
-#from cic_eth.encode import tx_normalize
 from cic_sync_filter.parse import (
         parse_transfer,
         parse_transferfrom,
         parse_giftto,
         )
+from cic_sync_filter import SyncFilter
 
 logg = logging.getLogger(__name__)
 
@@ -89,8 +88,8 @@ class CallbackFilter(SyncFilter):
         return (transfer_type, transfer_data)
 
 
-    def filter(self, conn, block, tx, db_session=None):
-        super(CallbackFilter, self).filter(conn, block, tx, db_session)
+    def filter(self, conn, block, tx):
+        super(CallbackFilter, self).filter(conn, block, tx)
         transfer_data = None
         transfer_type = None
         try:
