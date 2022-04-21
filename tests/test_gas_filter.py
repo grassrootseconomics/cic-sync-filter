@@ -24,12 +24,12 @@ from chainqueue.sql.state import (
 from hexathon import strip_0x
 from chainqueue.db.models.otx import Otx
 from chainqueue.db.enum import StatusBits
-
-# local imports
-from cic_eth.runnable.daemons.filters.gas import GasFilter
 from cic_eth.eth.gas import cache_gas_data
 from cic_eth.encode import tx_normalize
 from cic_eth.queue.tx import queue_create
+
+# local imports
+from cic_sync_filter.gas import GasFilter
 
 logg = logging.getLogger()
 
