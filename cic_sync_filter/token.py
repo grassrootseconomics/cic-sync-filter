@@ -24,8 +24,8 @@ logg = logging.getLogger(__name__)
 
 class TokenFilter(SyncFilter):
 
-    def filter(self, conn, block, tx, db_session=None):
-        super(TokenFilter, self).filter(conn, block, tx, db_session)
+    def filter(self, conn, block, tx):
+        super(TokenFilter, self).filter(conn, block, tx)
         if not tx.payload:
             return None
 

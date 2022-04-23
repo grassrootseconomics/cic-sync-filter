@@ -1,10 +1,12 @@
 # external imports
 from chainlib.eth.constant import ZERO_ADDRESS
+from chainsyncer.filter import SyncFilter as BaseSyncFilter
 
 
-class SyncFilter:
+class SyncFilter(BaseSyncFilter):
     
     def __init__(self, chain_spec, registry, queue, caller_address=ZERO_ADDRESS):
+        super(SyncFilter, self).__init__()
         self.exec_count = 0
         self.match_count = 0
         self.queue = queue
@@ -13,7 +15,7 @@ class SyncFilter:
         self.caller_address = caller_address
 
 
-    def filter(self, conn, block, tx, db_session):
+    def filter(self, conn, block, tx):
         self.exec_count += 1
 
 

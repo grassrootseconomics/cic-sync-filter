@@ -80,7 +80,7 @@ def test_register_filter(
     registry = CICRegistry(default_chain_spec, eth_rpc)
     queue = None
     fltr = RegistrationFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     assert t != None
     t.get_leaf()
     assert t.successful()
@@ -139,5 +139,5 @@ def test_register_filter_nomatch(
     registry = CICRegistry(default_chain_spec, eth_rpc)
     queue = None
     fltr = RegistrationFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     assert t == None

@@ -40,7 +40,7 @@ def test_filter_bogus(
     for fltr in fltrs:
         r = None
         try:
-            r = fltr.filter(eth_rpc, bogus_tx_block[0], bogus_tx_block[1], db_session=init_database)
+            r = fltr.filter(eth_rpc, bogus_tx_block[0], bogus_tx_block[1])
         except:
             pass
         assert not r

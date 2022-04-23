@@ -80,8 +80,8 @@ class CallbackFilter(SyncFilter):
         return (transfer_type, transfer_data)
 
 
-    def filter(self, conn, block, tx, db_session=None):
-        super(CallbackFilter, self).filter(conn, block, tx, db_session)
+    def filter(self, conn, block, tx):
+        super(CallbackFilter, self).filter(conn, block, tx)
         transfer_data = None
         transfer_type = None
         try:

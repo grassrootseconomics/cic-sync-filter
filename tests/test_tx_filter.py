@@ -97,7 +97,7 @@ def test_filter_tx(
     tx_signed_raw_bytes = bytes.fromhex(strip_0x(tx_signed_raw_hex))
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src, block=block)
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
 
     t.get()
     assert t.successful()

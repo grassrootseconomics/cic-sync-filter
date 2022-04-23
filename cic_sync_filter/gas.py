@@ -8,14 +8,15 @@ from hexathon import (
         )
 from chainlib.eth.tx import unpack
 from chainqueue.db.enum import StatusBits
-from chainqueue.db.models.tx import TxCache
-from chainqueue.db.models.otx import Otx
+#from chainqueue.db.models.tx import TxCache
+#from chainqueue.db.models.otx import Otx
 from chainlib.eth.address import to_checksum_address
-
-# local imports
-from cic_eth.db.models.base import SessionBase
+#from cic_eth.db.models.base import SessionBase
+from cic_eth.queue.query import get_account_tx_local
 from cic_eth.eth.gas import create_check_gas_task
 from cic_eth.queue.query import get_paused_tx
+
+# local imports
 from cic_eth.encode import tx_normalize
 from .base import SyncFilter
 
@@ -24,30 +25,24 @@ logg = logging.getLogger()
 
 class GasFilter(SyncFilter):
 
-    def filter(self, conn, block, tx, db_session):
-        super(GasFilter, self).filter(conn, block, tx, db_session)
+    def filter(self, conn, block, tx):
+        super(GasFilter, self).filter(conn, block, tx)
         if tx.value > 0 or len(tx.payload) == 0:
             tx_hash_hex = add_0x(tx.hash)
 
             sender_target = tx_normalize.wallet_address(tx.inputs[0])
-            session = SessionBase.bind_session(db_session)
-            q = session.query(TxCache.recipient)
-            q = q.filter(TxCache.sender==sender_target)
-            r = q.all()
+            txc = get_account_tx_local(self.chain_spec, sender_target, as_recipient=False)
 
             logline = None
-            if len(r) == 0:
-                logline = 'unsolicited gas refill tx {}; cannot find {} among senders'.format(tx_hash_hex, tx.outputs[0])
+            if len(txc) == 0:
+                logline = 'unsolicited gas refill tx {}; cannot find {} among senders'.format(tx_hash_hex, sender_target)
                 logline = self.to_logline(block, tx, logline)
                 logg.info(logline)
-                SessionBase.release_session(session)
                 return None
 
             self.register_match()
 
-            txs = get_paused_tx(self.chain_spec, status=StatusBits.GAS_ISSUES, sender=sender_target, session=session, decoder=unpack)
-
-            SessionBase.release_session(session)
+            txs = get_paused_tx(self.chain_spec, status=StatusBits.GAS_ISSUES, sender=sender_target, decoder=unpack)
 
             t = None
             address = to_checksum_address(sender_target)

@@ -62,7 +62,7 @@ def test_filter_transferauth(
     tx = Tx(tx_src, block=block)
 
     fltr = TransferAuthFilter(cic_registry, default_chain_spec, eth_rpc, call_address=contract_roles['CONTRACT_DEPLOYER'])
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
 
     t.get_leaf()
     assert t.successful()

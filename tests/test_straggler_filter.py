@@ -96,7 +96,7 @@ def test_straggler_tx(
     tx_signed_raw_bytes = bytes.fromhex(strip_0x(tx_signed_raw_hex))
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src, block=block)
-    t = fltr.filter(None, block, tx, db_session=init_database)
+    t = fltr.filter(None, block, tx)
     logg.debug('foo')
     tx_hash_hex_successor = t.get_leaf()
     logg.debug('bar')
@@ -163,7 +163,7 @@ def test_waitforgas_tx(
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src, block=block)
 
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     t.get_leaf()
     assert t.successful()
 
@@ -181,7 +181,7 @@ def test_waitforgas_tx(
     assert r['status'] == 1
 
 
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     t.get_leaf()
     assert t.successful()
 
@@ -201,7 +201,7 @@ def test_waitforgas_tx(
 
     init_database.commit()
 
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     t.get_leaf()
     
     otx = get_tx_local(default_chain_spec, tx.hash, session=init_database)

@@ -33,7 +33,8 @@ class TransferAuthFilter(SyncFilter):
         self.transfer_request_contract = registry.by_name('TransferAuthorization', sender_address=call_address)
 
 
-    def filter(self, conn, block, tx, db_session): #rcpt, chain_str, session=None):
+    def filter(self, conn, block, tx):
+        super(TransferAuthFilter, self).filter(conn, block, tx)
 
         if tx.payload == None:
             logg.debug('no payload')

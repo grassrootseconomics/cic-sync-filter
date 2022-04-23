@@ -106,7 +106,7 @@ def test_filter_gas(
     for v in r:
         logg.info('have row {}'.format(v))
 
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
 
     t.get_leaf()
     assert t.successful()

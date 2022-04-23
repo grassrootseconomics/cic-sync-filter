@@ -73,7 +73,7 @@ def test_filter_gas(
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src, block=block)
     tx.apply_receipt(rcpt)
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     assert t.get() == None
 
     nonce_oracle = RPCNonceOracle(contract_roles['CONTRACT_DEPLOYER'], eth_rpc)
@@ -84,7 +84,7 @@ def test_filter_gas(
     r = eth_rpc.do(o)
     assert r['status'] == 1
 
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, block, tx)
     r = t.get_leaf()
     assert t.successful()
 
@@ -127,4 +127,4 @@ def test_filter_unknown_contract_error(
     tx_signed_raw_bytes = bytes.fromhex(strip_0x(tx_signed_raw_hex))
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src)
-    t = fltr.filter(eth_rpc, None, tx, db_session=init_database)
+    t = fltr.filter(eth_rpc, None, tx)

@@ -25,8 +25,8 @@ class RegistrationFilter(SyncFilter):
         self.contract_address = registry.by_name('AccountRegistry', sender_address=caller_address)
 
 
-    def filter(self, conn, block, tx, db_session=None): 
-        super(RegistrationFilter, self).filter(conn, block, tx, db_session)
+    def filter(self, conn, block, tx):
+        super(RegistrationFilter, self).filter(conn, block, tx)
         if self.contract_address != tx.inputs[0]:
             logg.debug('not an account registry tx; {} != {}'.format(self.contract_address, tx.inputs[0]))
             return None

@@ -23,8 +23,8 @@ class StragglerFilter(SyncFilter):
 
     gas_balance_threshold = 0
 
-    def filter(self, conn, block, tx, db_session=None):
-        txc = get_tx_cache(self.chain_spec, tx.hash, session=db_session)
+    def filter(self, conn, block, tx):
+        txc = get_tx_cache(self.chain_spec, tx.hash)
         if txc['status_code'] & StatusBits.GAS_ISSUES > 0:
             o = balance(tx.outputs[0])
             r = conn.do(o)
