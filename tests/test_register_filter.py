@@ -25,10 +25,10 @@ from hexathon import (
         strip_0x,
         add_0x,
         )
+from cic_eth.queue.query import get_account_tx_local
 
 # local imports
-from cic_eth.runnable.daemons.filters.register import RegistrationFilter
-from cic_eth.queue.query import get_account_tx_local
+from cic_sync_filter.register import RegistrationFilter
 
 logg = logging.getLogger()
 
