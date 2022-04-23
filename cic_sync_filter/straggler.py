@@ -3,14 +3,14 @@ import logging
 
 # external imports
 import celery
-from chainqueue.sql.state import (
-    obsolete_by_cache,
-    set_fubar,
-    )
 from chainqueue.error import TxStateChangeError
 from hexathon import to_int as hex_to_int
 from chainlib.eth.gas import balance
 from cic_eth.queue.query import get_tx_cache_local
+from cic_eth.queue.state import (
+        obsolete_local,
+        set_fubar_local,
+        )
 from chainqueue.enum import StatusBits
 
 # local imports
@@ -46,9 +46,9 @@ class StragglerFilter(SyncFilter):
 
 
         try:
-            obsolete_by_cache(self.chain_spec, tx.hash, False)
+            obsolete_local(self.chain_spec, tx.hash, False)
         except TxStateChangeError:
-            set_fubar(self.chain_spec, tx.hash, session=db_session)
+            set_fubar_local(self.chain_spec, tx.hash, session=db_session)
             return False
 
         s_send = celery.signature(
