@@ -36,14 +36,14 @@ from hexathon import (
         strip_0x,
         uniform as hex_uniform,
         )
-
-# local imports
-from cic_eth.runnable.daemons.filters.straggler import StragglerFilter
 from cic_eth.eth.gas import cache_gas_data
 from cic_eth.queue.query import (
         get_tx_local,
         get_account_tx_local,
         )
+
+# local imports
+from cic_sync_filter.straggler import StragglerFilter
 
 logg = logging.getLogger()
 
