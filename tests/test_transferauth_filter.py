@@ -16,10 +16,10 @@ from chainlib.eth.block import (
         )
 from hexathon import strip_0x
 from chainqueue.sql.query import get_account_tx
+from cic_eth.encode import tx_normalize
 
 # local imports
-from cic_eth.runnable.daemons.filters.transferauth import TransferAuthFilter
-from cic_eth.encode import tx_normalize
+from cic_sync_filter.transferauth import TransferAuthFilter
 
 
 def test_filter_transferauth(
