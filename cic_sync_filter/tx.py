@@ -19,7 +19,7 @@ logg = logging.getLogger(__name__)
 class TxFilter(SyncFilter):
 
     def filter(self, conn, block, tx):
-        super(TxFilter, self).filter(conn, block)
+        super(TxFilter, self).filter(conn, block, tx)
 
         try:
             get_tx_local(self.chain_spec, tx.hash)

@@ -17,6 +17,7 @@ from chainlib.eth.block import (
 from hexathon import strip_0x
 from chainqueue.sql.query import get_account_tx
 from cic_eth.encode import tx_normalize
+from cic_eth_registry import CICRegistry
 
 # local imports
 from cic_sync_filter.transferauth import TransferAuthFilter
@@ -61,7 +62,9 @@ def test_filter_transferauth(
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src, block=block)
 
-    fltr = TransferAuthFilter(cic_registry, default_chain_spec, eth_rpc, call_address=contract_roles['CONTRACT_DEPLOYER'])
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+    queue = None
+    fltr = TransferAuthFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
     t = fltr.filter(eth_rpc, block, tx)
 
     t.get_leaf()

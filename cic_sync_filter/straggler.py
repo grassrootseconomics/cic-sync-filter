@@ -10,7 +10,7 @@ from chainqueue.sql.state import (
 from chainqueue.error import TxStateChangeError
 from hexathon import to_int as hex_to_int
 from chainlib.eth.gas import balance
-from chainqueue.sql.query import get_tx_cache
+from cic_eth.queue.query import get_tx_cache_local
 from chainqueue.enum import StatusBits
 
 # local imports
@@ -24,7 +24,7 @@ class StragglerFilter(SyncFilter):
     gas_balance_threshold = 0
 
     def filter(self, conn, block, tx):
-        txc = get_tx_cache(self.chain_spec, tx.hash)
+        txc = get_tx_cache_local(self.chain_spec, tx.hash)
         if txc['status_code'] & StatusBits.GAS_ISSUES > 0:
             o = balance(tx.outputs[0])
             r = conn.do(o)
@@ -46,7 +46,7 @@ class StragglerFilter(SyncFilter):
 
 
         try:
-            obsolete_by_cache(self.chain_spec, tx.hash, False, session=db_session)
+            obsolete_by_cache(self.chain_spec, tx.hash, False)
         except TxStateChangeError:
             set_fubar(self.chain_spec, tx.hash, session=db_session)
             return False

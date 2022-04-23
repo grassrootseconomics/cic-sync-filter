@@ -26,11 +26,9 @@ logg = logging.getLogger(__name__)
 
 class TransferAuthFilter(SyncFilter):
 
-    def __init__(self, registry, chain_spec, conn, queue=None, call_address=ZERO_ADDRESS):
-        self.queue = queue
-        self.chain_spec = chain_spec
-        registry = CICRegistry(chain_spec, conn)
-        self.transfer_request_contract = registry.by_name('TransferAuthorization', sender_address=call_address)
+    def __init__(self, chain_spec, registry, queue, caller_address=ZERO_ADDRESS):
+        super(TransferAuthFilter, self).__init__(chain_spec, registry, queue, caller_address=caller_address)
+        self.transfer_request_contract = registry.by_name('TransferAuthorization', sender_address=caller_address)
 
 
     def filter(self, conn, block, tx):
