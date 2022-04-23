@@ -24,12 +24,6 @@ logg = logging.getLogger()
 
 class GasFilter(SyncFilter):
 
-    def __init__(self, chain_spec, queue=None):
-        super(GasFilter, self).__init__()
-        self.queue = queue
-        self.chain_spec = chain_spec
-
-
     def filter(self, conn, block, tx, db_session):
         super(GasFilter, self).filter(conn, block, tx, db_session)
         if tx.value > 0 or len(tx.payload) == 0:

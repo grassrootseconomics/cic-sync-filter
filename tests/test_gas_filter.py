@@ -41,6 +41,7 @@ def test_filter_gas(
         eth_signer,
         agent_roles,
         celery_session_worker,
+        contract_roles,
     ):
 
     rpc = RPCConnection.connect(default_chain_spec, 'default')
@@ -87,7 +88,8 @@ def test_filter_gas(
             )
     init_database.commit()
 
-    fltr = GasFilter(default_chain_spec, queue=None)
+    queue = None
+    fltr = GasFilter(default_chain_spec, None, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
 
     o = block_latest()
     r = eth_rpc.do(o)

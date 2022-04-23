@@ -13,16 +13,15 @@ from chainlib.eth.gas import balance
 from chainqueue.sql.query import get_tx_cache
 from chainqueue.enum import StatusBits
 
+# local imports
+from .base import SyncFilter
+
 logg = logging.getLogger()
 
 
-class StragglerFilter:
+class StragglerFilter(SyncFilter):
 
-    def __init__(self, chain_spec, gas_balance_threshold, queue='cic-eth'):
-        self.chain_spec = chain_spec
-        self.queue = queue
-        self.gas_balance_threshold = gas_balance_threshold
-
+    gas_balance_threshold = 0
 
     def filter(self, conn, block, tx, db_session=None):
         txc = get_tx_cache(self.chain_spec, tx.hash, session=db_session)

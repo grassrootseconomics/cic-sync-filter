@@ -1,3 +1,6 @@
+# external imports
+from cic_eth_registry import CICRegistry
+
 # local imports
 from cic_sync_filter.gas import GasFilter
 from cic_sync_filter.transferauth import TransferAuthFilter
@@ -21,13 +24,17 @@ def test_filter_bogus(
         account_registry,
         ):
 
+    queue = None
+
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+
     fltrs = [
-        TransferAuthFilter(cic_registry, default_chain_spec, eth_rpc, call_address=contract_roles['CONTRACT_DEPLOYER']),
-        GasFilter(default_chain_spec, queue=None),
-        TxFilter(default_chain_spec, None),
-        CallbackFilter(default_chain_spec, None, None, caller_address=contract_roles['CONTRACT_DEPLOYER']),
-        StragglerFilter(default_chain_spec, None),
-        RegistrationFilter(default_chain_spec, account_registry, queue=None),
+        #TransferAuthFilter(registry, default_chain_spec, eth_rpc, call_address=contract_roles['CONTRACT_DEPLOYER']),
+        GasFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER']),
+        TxFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER']),
+        CallbackFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER']),
+        StragglerFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER']),
+        RegistrationFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER']),
         ]
       
     for fltr in fltrs:

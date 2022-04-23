@@ -25,7 +25,7 @@ from cic_sync_filter.parse import (
         parse_transferfrom,
         parse_giftto,
         )
-from cic_sync_filter import SyncFilter
+from .base import SyncFilter
 
 logg = logging.getLogger(__name__)
 
@@ -33,14 +33,6 @@ logg = logging.getLogger(__name__)
 class CallbackFilter(SyncFilter):
 
     trusted_addresses = []
-
-    def __init__(self, chain_spec, method, queue, caller_address=ZERO_ADDRESS):
-        super(CallbackFilter, self).__init__()
-        self.queue = queue
-        self.method = method
-        self.chain_spec = chain_spec
-        self.caller_address = caller_address
-
 
     def call_back(self, transfer_type, result):
         result['chain_spec'] = result['chain_spec'].asdict()
@@ -88,8 +80,8 @@ class CallbackFilter(SyncFilter):
         return (transfer_type, transfer_data)
 
 
-    def filter(self, conn, block, tx):
-        super(CallbackFilter, self).filter(conn, block, tx)
+    def filter(self, conn, block, tx, db_session=None):
+        super(CallbackFilter, self).filter(conn, block, tx, db_session)
         transfer_data = None
         transfer_type = None
         try:

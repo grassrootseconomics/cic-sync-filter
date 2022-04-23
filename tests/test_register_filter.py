@@ -6,11 +6,15 @@ import os
 from eth_accounts_index.registry import AccountRegistry
 from chainlib.connection import RPCConnection
 from chainlib.eth.nonce import RPCNonceOracle
-from chainlib.eth.gas import OverrideGasOracle
+from chainlib.eth.gas import (
+        OverrideGasOracle,
+        Gas,
+        )
 from chainlib.eth.tx import(
         receipt,
         unpack,
         Tx,
+        TxFormat,
         )
 from chainlib.eth.block import (
         block_latest,
@@ -26,6 +30,7 @@ from hexathon import (
         add_0x,
         )
 from cic_eth.queue.query import get_account_tx_local
+from cic_eth_registry import CICRegistry
 
 # local imports
 from cic_sync_filter.register import RegistrationFilter
@@ -72,14 +77,11 @@ def test_register_filter(
     tx = Tx(tx_src, block=block, rcpt=rcpt)
     tx.apply_receipt(rcpt)
 
-    fltr = RegistrationFilter(default_chain_spec, to_checksum_address(os.urandom(20).hex()), queue=None)
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+    queue = None
+    fltr = RegistrationFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
     t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
-    assert t == None
-
-    fltr = RegistrationFilter(default_chain_spec, to_checksum_address(account_registry), queue=None)
-    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
-    logg.debug('t {}'.format(t))
-
+    assert t != None
     t.get_leaf()
     assert t.successful()
 
@@ -93,3 +95,49 @@ def test_register_filter(
 
     gift = Faucet.parse_give_to_request(gift_tx['data'])
     assert add_0x(gift[0]) == agent_roles['ALICE']
+
+
+def test_register_filter_nomatch(
+        default_chain_spec,
+        init_database,
+        eth_rpc,
+        eth_signer,
+        account_registry,
+        faucet,
+        register_lookups,
+        contract_roles,
+        agent_roles,
+        cic_registry,
+        init_celery_tasks,
+        celery_session_worker,
+        caplog,
+        ):
+
+    nonce_oracle = RPCNonceOracle(contract_roles['ACCOUNT_REGISTRY_WRITER'], conn=eth_rpc)
+    gas_oracle = OverrideGasOracle(limit=AccountRegistry.gas(), conn=eth_rpc)
+
+    c = Gas(default_chain_spec, signer=eth_signer, nonce_oracle=nonce_oracle, gas_oracle=gas_oracle)
+    (tx_hash_hex, o) = c.create(agent_roles['ALICE'], agent_roles['BOB'], 100 * (10 ** 6))
+    r = eth_rpc.do(o)
+    tx_signed_raw_bytes = bytes.fromhex(strip_0x(o['params'][0]))
+
+    o = receipt(tx_hash_hex)
+    rcpt = eth_rpc.do(o)
+    assert rcpt['status'] == 1
+
+    o = block_latest()
+    r = eth_rpc.do(o)
+    o = block_by_number(r, include_tx=False)
+    r = eth_rpc.do(o)
+    block = Block(r)
+    block.txs = [tx_hash_hex]
+
+    tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
+    tx = Tx(tx_src, block=block, rcpt=rcpt)
+    tx.apply_receipt(rcpt)
+
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+    queue = None
+    fltr = RegistrationFilter(default_chain_spec, registry, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
+    t = fltr.filter(eth_rpc, block, tx, db_session=init_database)
+    assert t == None

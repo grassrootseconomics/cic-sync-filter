@@ -84,7 +84,8 @@ def test_filter_tx(
     set_reserved(default_chain_spec, tx_hash_hex, session=init_database)
     set_sent(default_chain_spec, tx_hash_hex, session=init_database)
 
-    fltr = TxFilter(default_chain_spec, None)
+    queue = None
+    fltr = TxFilter(default_chain_spec, None, queue)
 
     o = block_latest()
     r = eth_rpc.do(o)

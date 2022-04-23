@@ -1,8 +1,16 @@
+# external imports
+from chainlib.eth.constant import ZERO_ADDRESS
+
+
 class SyncFilter:
     
-    def __init__(self):
+    def __init__(self, chain_spec, registry, queue, caller_address=ZERO_ADDRESS):
         self.exec_count = 0
         self.match_count = 0
+        self.queue = queue
+        self.chain_spec = chain_spec
+        self.registry = registry
+        self.caller_address = caller_address
 
 
     def filter(self, conn, block, tx, db_session):

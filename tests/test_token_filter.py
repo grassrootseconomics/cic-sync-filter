@@ -26,6 +26,7 @@ from eth_token_index import TokenUniqueSymbolIndex
 from cic_eth_registry.error import UnknownContractError
 from cic_eth.db.models.gas_cache import GasCache
 from cic_eth.db.models.base import SessionBase
+from cic_eth_registry import CICRegistry
 
 # local imports
 from cic_sync_filter.token import TokenFilter
@@ -58,7 +59,8 @@ def test_filter_gas(
     rcpt = eth_rpc.do(o)
     assert rcpt['status'] == 1
 
-    fltr = TokenFilter(default_chain_spec, queue=None, call_address=agent_roles['ALICE'])
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+    fltr = TokenFilter(default_chain_spec, registry, queue=None, caller_address=agent_roles['ALICE'])
 
     o = block_latest()
     r = eth_rpc.do(o)
@@ -119,8 +121,9 @@ def test_filter_unknown_contract_error(
     gas_oracle = OverrideGasOracle(price=1000000000, limit=1000000)
     c = ERC20(default_chain_spec, signer=eth_signer, nonce_oracle=nonce_oracle, gas_oracle=gas_oracle)
     (tx_hash_hex, tx_signed_raw_hex) = c.transfer(foo_token, token_roles['FOO_TOKEN_OWNER'], agent_roles['ALICE'], 100, tx_format=TxFormat.RLP_SIGNED)
-    
-    fltr = TokenFilter(default_chain_spec, queue=None, call_address=agent_roles['ALICE'])
+   
+    registry = CICRegistry(default_chain_spec, eth_rpc)
+    fltr = TokenFilter(default_chain_spec, registry, queue=None, caller_address=agent_roles['ALICE'])
     tx_signed_raw_bytes = bytes.fromhex(strip_0x(tx_signed_raw_hex))
     tx_src = unpack(tx_signed_raw_bytes, default_chain_spec)
     tx = Tx(tx_src)

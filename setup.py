@@ -20,6 +20,7 @@ f.close()
 
 
 setup(
+        include_package_data=True,
         install_requires=requirements,
         tests_require=test_requirements,
         )

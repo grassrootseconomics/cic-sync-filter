@@ -1,8 +1,9 @@
 # standard imports
 import logging
 
-# third-party imports
+# external imports
 import celery
+from chainlib.eth.constant import ZERO_ADDRESS
 from chainlib.eth.address import to_checksum_address
 from hexathon import (
         add_0x,
@@ -19,11 +20,9 @@ account_registry_add_log_hash = '0x9cc987676e7d63379f176ea50df0ae8d2d9d1141d1231
 
 class RegistrationFilter(SyncFilter):
 
-    def __init__(self, chain_spec, contract_address, queue=None):
-        super(RegistrationFilter, self).__init__()
-        self.chain_spec = chain_spec
-        self.queue = queue
-        self.contract_address = contract_address
+    def __init__(self, chain_spec, registry, queue, caller_address=ZERO_ADDRESS):
+        super(RegistrationFilter, self).__init__(chain_spec, registry, queue, caller_address=caller_address)
+        self.contract_address = registry.by_name('AccountRegistry', sender_address=caller_address)
 
 
     def filter(self, conn, block, tx, db_session=None): 

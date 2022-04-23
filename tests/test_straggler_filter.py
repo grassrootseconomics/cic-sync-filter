@@ -2,6 +2,7 @@
 import logging
 
 # external imports
+import pytest
 from chainlib.connection import RPCConnection
 from chainlib.eth.nonce import (
         OverrideNonceOracle,
@@ -31,6 +32,7 @@ from chainqueue.sql.state import (
         set_sent,
         set_waitforgas,
         )
+from cic_eth.error import OutOfGasError
 
 from hexathon import (
         strip_0x,
@@ -55,6 +57,7 @@ def test_straggler_tx(
         eth_signer,
         agent_roles,
         celery_session_worker,
+        contract_roles,
         ):
 
     rpc = RPCConnection.connect(default_chain_spec, 'default')
@@ -80,7 +83,8 @@ def test_straggler_tx(
     set_reserved(default_chain_spec, tx_hash_hex, session=init_database)
     set_sent(default_chain_spec, tx_hash_hex, session=init_database)
 
-    fltr = StragglerFilter(default_chain_spec, 0, queue=None)
+    queue = None
+    fltr = StragglerFilter(default_chain_spec, None, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
 
     o = block_latest()
     r = eth_rpc.do(o)
@@ -117,6 +121,7 @@ def test_waitforgas_tx(
         agent_roles,
         celery_session_worker,
         whoever,
+        contract_roles,
         ):
 
     safe_gas = 1000000000000000000
@@ -143,7 +148,9 @@ def test_waitforgas_tx(
     set_ready(default_chain_spec, tx_hash_hex, session=init_database)
     set_waitforgas(default_chain_spec, tx_hash_hex, session=init_database)
 
-    fltr = StragglerFilter(default_chain_spec, safe_gas, queue=None)
+    queue = None
+    StragglerFilter.gas_balance_threshold = safe_gas
+    fltr = StragglerFilter(default_chain_spec, None, queue, caller_address=contract_roles['CONTRACT_DEPLOYER'])
      
     o = block_latest()
     r = eth_rpc.do(o)

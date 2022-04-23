@@ -24,13 +24,6 @@ logg = logging.getLogger(__name__)
 
 class TokenFilter(SyncFilter):
 
-    def __init__(self, chain_spec, queue, call_address=ZERO_ADDRESS):
-        super(TokenFilter, self).__init__()
-        self.queue = queue
-        self.chain_spec = chain_spec
-        self.caller_address = call_address
-
-
     def filter(self, conn, block, tx, db_session=None):
         super(TokenFilter, self).filter(conn, block, tx, db_session)
         if not tx.payload:
