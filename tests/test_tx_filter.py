@@ -24,10 +24,10 @@ from chainqueue.sql.state import (
         set_sent,
         )
 from hexathon import strip_0x
+from cic_eth.eth.gas import cache_gas_data
 
 # local imports
-from cic_eth.runnable.daemons.filters.tx import TxFilter
-from cic_eth.eth.gas import cache_gas_data
+from cic_sync_filter.tx import TxFilter
 
 
 def test_filter_tx(
