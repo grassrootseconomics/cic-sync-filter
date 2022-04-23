@@ -24,11 +24,11 @@ from chainlib.eth.contract import ABIContractEncoder
 from hexathon import strip_0x
 from eth_token_index import TokenUniqueSymbolIndex
 from cic_eth_registry.error import UnknownContractError
-
-# local imports
-from cic_eth.runnable.daemons.filters.token import TokenFilter
 from cic_eth.db.models.gas_cache import GasCache
 from cic_eth.db.models.base import SessionBase
+
+# local imports
+from cic_sync_filter.token import TokenFilter
 
 
 def test_filter_gas(
