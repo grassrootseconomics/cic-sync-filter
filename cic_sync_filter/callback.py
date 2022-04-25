@@ -34,6 +34,15 @@ class CallbackFilter(SyncFilter):
 
     trusted_addresses = []
 
+    def __init__(self, chain_spec, registry, queue, caller_address=ZERO_ADDRESS):
+        super(CallbackFilter, self).__init__(chain_spec, registry, queue, caller_address=caller_address)
+        self.method = None
+
+
+    def set_method(self, method):
+        self.method = method
+
+
     def call_back(self, transfer_type, result):
         result['chain_spec'] = result['chain_spec'].asdict()
         s = celery.signature(
