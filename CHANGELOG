@@ -1,2 +1,3 @@
 - 0.13.0
 	* Receive filters and unit tests from cic-stack/cic-eth 0.12.10
+	* Reverse order of queue and task name in task callbacks config
