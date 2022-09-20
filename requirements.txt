@@ -1,6 +1,6 @@
 chainsyncer~=0.3.2
 chainqueue~=0.0.6rc9
-celery==4.4.7
+celery==5.2.2
 cic-eth-registry~=0.6.9
 erc20-faucet~=0.4.0
 cic_eth~=0.13.0
