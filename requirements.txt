@@ -4,4 +4,4 @@ celery==4.4.7
 cic-eth-registry~=0.6.9
 erc20-faucet~=0.4.0
 cic_eth~=0.13.0
-redis==3.5.3
+redis==4.5.3
